@@ -1,122 +1,47 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import heroImg from './assets/hero.png'
-import './App.css'
+import GlowCursor   from './components/GlowCursor'
+import NavBar       from './components/chrome/NavBar'
+import BinaryRain   from './components/BinaryRain'
 
-function App() {
-  const [count, setCount] = useState(0)
+import HeroScene    from './scenes/Page1/HeroScene'
+import TunnelScene  from './scenes/Page1/TunnelScene'
+import CoreChipScene from './scenes/Page1/CoreChipScene'
 
+import CircuitScene from './scenes/Page2/CircuitScene'
+
+import SparkScene   from './scenes/Page3/SparkScene'
+import CareerNetwork from './scenes/Page3/CareerNetwork'
+import FutureScene  from './scenes/Page3/FutureScene'
+
+export default function App() {
   return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.jsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
+    <main className="overflow-x-clip">
+      {/* ── 전역 상시 데이터 레인 (v3 #2) ──
+          body 가 이미 #000 이므로 main 배경은 비우고, 레인을 -z-10 으로 깔아
+          전 페이지 뒤에 항상 은은히 흐르게 한다. 각 캔버스 씬은 자기 비주얼을
+          이 위에 그린다(Tunnel/Core 캔버스는 자체 트레일로 거의 덮음). */}
+      <div className="fixed inset-0 -z-10 pointer-events-none">
+        <BinaryRain opacity={0.08} speed={0.5} density={0.985} />
+      </div>
 
-      <div className="ticks"></div>
+      <GlowCursor />
+      <NavBar />
 
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
+      {/* ── Page 1: 현실 → 터널 → (분해→Rain→Core→Chip→회로큐) ──
+          (v4 P0) 진입부 ComputerScene(모니터 확대) 삭제 → Hero 직후 즉시 터널 진입.
+          진입 연출은 터널 자체 ENTRY 조립(ENTRY_END=0.18)이 담당. */}
+      <HeroScene />
+      <TunnelScene />
+      <CoreChipScene />
 
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
+      {/* ── Page 2: 살아있는 PCB — 코어에서 과목 노드로 확장 ── */}
+      <CircuitScene />
+
+      <div className="section-divider" />
+
+      {/* ── Page 3: 스파크 → 커리어 → 미래 ── */}
+      <SparkScene />
+      <CareerNetwork />
+      <FutureScene />
+    </main>
   )
 }
-
-export default App
