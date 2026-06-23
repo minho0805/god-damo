@@ -140,11 +140,13 @@ function FullScreenSuckCanvas({ progressRef }) {
     const ro = new ResizeObserver(resize)
     ro.observe(canvas)
 
-    const N = 260
+    const N = 320
+    // 일부는 화면 가까이(작은 r), 일부는 이미 가장자리 멀리(큰 r) — 처음부터
+    // 노트북 화면 경계에 갇히지 않고 뷰포트 전체에 흩어져 있다가 점점 짙어진다
     const spawn = () => ({
       angle: Math.random() * Math.PI * 2,
-      r: 10 + Math.random() * 40,
-      z: 0.1 + Math.random() * 0.9,
+      r: 15 + Math.random() * Math.random() * 900,
+      z: 0.06 + Math.random() * 0.94,
       char: Math.random() > 0.5 ? '1' : '0',
     })
     const glyphs = Array.from({ length: N }, spawn)
@@ -153,22 +155,19 @@ function FullScreenSuckCanvas({ progressRef }) {
     function loop() {
       const p = progressRef.current
       const closeT = p > TYPE_END ? Math.max(0, Math.min(1, (p - TYPE_END) / (CLOSE_END - TYPE_END))) : 0
-      // 카메라가 빨려들어가는 구간(0.45~1.0)과 맞춰 화면 전체로 번져나간다
-      const burstT = Math.max(0, Math.min(1, (closeT - 0.45) / 0.55))
-      const eBurst = burstT * burstT * burstT // 후반부에 급격히 퍼진다
+      const burstT = Math.max(0, Math.min(1, (closeT - 0.2) / 0.8))
+      const eBurst = burstT * burstT // 갈수록 급격히 짙어지고 빨라진다
 
       const W = canvas.width, H = canvas.height
       const cx = W * 0.5, cy = H * 0.38
 
       if (wrapRef.current) {
-        const radius = 5 + eBurst * 130 // % — 작은 원에서 화면 전체를 덮는 크기까지
-        wrapRef.current.style.clipPath = `circle(${radius}% at 50% 38%)`
-        wrapRef.current.style.opacity = String(Math.min(1, burstT * 2.2))
+        wrapRef.current.style.opacity = String(Math.min(1, burstT * 1.6))
       }
 
-      const velocity = (4 + burstT * 30) * (1 + eBurst * 1.5)
+      const velocity = (3 + eBurst * 42)
 
-      ctx.fillStyle = `rgba(2,6,4,${0.28})`
+      ctx.fillStyle = `rgba(2,6,4,${0.24 + eBurst * 0.1})`
       ctx.fillRect(0, 0, W, H)
 
       for (const g of glyphs) {
@@ -178,18 +177,18 @@ function FullScreenSuckCanvas({ progressRef }) {
         const k = 1 / g.z
         const x = cx + Math.cos(g.angle) * g.r * k
         const y = cy + Math.sin(g.angle) * g.r * k * 0.7
-        if (x < -40 || x > W + 40 || y < -40 || y > H + 40) {
+        if (x < -60 || x > W + 60 || y < -60 || y > H + 60) {
           Object.assign(g, spawn(), { z: 1 })
           continue
         }
 
         const depth = 1 - g.z
-        const alpha = Math.min(1, depth * 1.5)
+        const alpha = Math.min(1, depth * 1.5) * Math.max(0.25, eBurst)
         if (alpha <= 0.02) continue
 
         ctx.globalAlpha = alpha
         ctx.fillStyle = depth > 0.7 ? '#aaffcc' : depth > 0.35 ? C.green : C.greenDim
-        const size = Math.min(60, 11 + k * 5)
+        const size = Math.min(70, 11 + k * 5)
         ctx.font = `bold ${size}px 'JetBrains Mono', monospace`
         ctx.textAlign = 'center'
         ctx.textBaseline = 'middle'
@@ -245,7 +244,7 @@ function Laptop({ progressRef, typed, isComplete }) {
     const eEnter = easeOutCubic(enterT)
 
     const z = -9 + 9 * eEnter
-    const y = -1.7 + (-0.35 - -1.7) * eEnter
+    const y = -1.7 + (-0.75 - -1.7) * eEnter
     const scale = LAPTOP_SCALE * (0.4 + 0.6 * eEnter)
     group.position.set(0, y, z)
     group.scale.setScalar(scale)
@@ -462,7 +461,7 @@ export default function CodeIntroScene() {
   }, [])
 
   return (
-    <section ref={containerRef} className="relative h-[460vh]">
+    <section ref={containerRef} className="relative h-[620vh]">
       <div className="sticky top-0 h-screen flex items-center justify-center overflow-hidden">
         <div className="absolute inset-0 grid-bg" />
         <div
