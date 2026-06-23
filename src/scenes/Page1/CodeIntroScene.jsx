@@ -183,7 +183,10 @@ function FullScreenSuckCanvas({ progressRef }) {
         }
 
         const depth = 1 - g.z
-        const alpha = Math.min(1, depth * 1.5) * Math.max(0.25, eBurst)
+        // 화면 밖(반지름이 큰) 글자는 화면에 머물려면 z가 높아야(=depth가 낮아야) 해서
+        // depth 기반 알파를 쓰면 구조적으로 더 흐리게 보인다 — 밝기는 depth와 분리해
+        // 안과 밖이 동일하게 뚜렷이 보이도록 한다.
+        const alpha = Math.max(0.55, eBurst)
         if (alpha <= 0.02) continue
 
         ctx.globalAlpha = alpha
@@ -461,7 +464,7 @@ export default function CodeIntroScene() {
   }, [])
 
   return (
-    <section ref={containerRef} className="relative h-[620vh]">
+    <section ref={containerRef} className="relative h-[840vh]">
       <div className="sticky top-0 h-screen flex items-center justify-center overflow-hidden">
         <div className="absolute inset-0 grid-bg" />
         <div
