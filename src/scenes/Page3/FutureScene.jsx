@@ -47,13 +47,6 @@ function Starfield({ canvasRef }) {
   return null
 }
 
-const AWARDS = [
-  { icon: '🏆', title: 'SW 중심 대학', sub: '교육부 선정' },
-  { icon: '🚀', title: '창업 동아리 12개', sub: '학과 내 운영 중' },
-  { icon: '🤝', title: '산학협력 48개사', sub: '현장 실습 연계' },
-  { icon: '💡', title: '특허 출원 23건', sub: '학부생 공동 연구' },
-]
-
 export default function FutureScene() {
   const canvasRef = useRef(null)
 
@@ -63,41 +56,8 @@ export default function FutureScene() {
       <canvas ref={canvasRef} className="absolute inset-0 w-full h-full" />
       <Starfield canvasRef={canvasRef} />
 
-      {/* Awards grid — 명시적 중앙 정렬(mx-auto) + The Future 와 간격 확대(mb-20→mb-32) (v3 #6) */}
-      <div className="relative z-10 w-full max-w-2xl mx-auto px-6 mb-32">
-        <motion.p
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
-          className="font-mono text-xs text-green tracking-[0.4em] uppercase text-center mb-10"
-        >
-          Awards · Achievements
-        </motion.p>
-
-        <div className="grid grid-cols-2 gap-4">
-          {AWARDS.map((a, i) => (
-            <motion.div
-              key={a.title}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: i * 0.1 }}
-              className="rounded-xl px-5 py-4"
-              style={{
-                border: '1px solid rgba(0, 200, 83,0.15)',
-                background: 'rgba(255,255,255,0.02)',
-              }}
-            >
-              <div className="text-xl mb-2">{a.icon}</div>
-              <p className="font-mono text-white text-sm font-medium">{a.title}</p>
-              <p className="font-mono text-[#555] text-xs mt-1">{a.sub}</p>
-            </motion.div>
-          ))}
-        </div>
-      </div>
-
       {/* Main message */}
-      <div className="relative z-10 text-center px-6">
+      <div className="relative z-10 w-full text-center px-6">
         <div className="section-divider mb-16 max-w-xs mx-auto" />
 
         <motion.p
@@ -115,7 +75,7 @@ export default function FutureScene() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 1, ease: [0.16, 1, 0.3, 1], delay: 0.15 }}
-          className="w-full max-w-3xl mx-auto"
+          className="w-full max-w-[1200px] mx-auto"
         >
           <FacultyCarousel />
         </motion.div>

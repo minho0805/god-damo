@@ -258,6 +258,9 @@ export default function CircuitScene() {
     <section ref={sectionRef} id="curriculum" className="relative h-[420vh]">
       <div className="sticky top-0 h-screen overflow-hidden flex flex-col items-center justify-center">
 
+        {/* 배경 차단막 — 전역 BinaryRain(0/1)이 PCB 회로 위로 비치지 않도록 완전히 덮는다 */}
+        <div className="absolute inset-0 bg-black" />
+
         {/* PCB substrate */}
         <div
           className="absolute inset-0"

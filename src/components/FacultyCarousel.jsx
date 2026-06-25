@@ -1,82 +1,72 @@
-import { useRef, useState } from 'react'
-import { faculty } from '../data/faculty'
-import { C } from '../constants/colors'
-import PortraitPointCloud from './PortraitPointCloud'
+import { useState, useRef } from 'react';
+import { faculty } from '../data/faculty';
 
-const EASE = 'cubic-bezier(.22,.85,.25,1)'
-const DUR = 460
+const EASE = 'cubic-bezier(.22,.85,.25,1)';
+const DUR = 460;
 
 export default function FacultyCarousel() {
-  const [idx, setIdx] = useState(0)
-  const stageRef = useRef(null)
+  const [idx, setIdx] = useState(0);
+  const stageRef = useRef(null);
 
   const animate = (dir) => {
-    const el = stageRef.current
-    if (!el) return
-    const fromDeg = dir > 0 ? 78 : -78
+    const el = stageRef.current;
+    if (!el) return;
+    const fromX = dir > 0 ? 68 : -68;
     el.animate(
       [
-        {
-          transform: `rotateY(${fromDeg}deg) translateZ(-260px) translateX(${dir > 0 ? 40 : -40}px)`,
-          opacity: 0,
-          filter: 'blur(4px) brightness(0.6)',
-        },
-        {
-          transform: `rotateY(${fromDeg * 0.35}deg) translateZ(-90px) translateX(${dir > 0 ? 12 : -12}px)`,
-          opacity: 0.7,
-          filter: 'blur(1px) brightness(0.85)',
-          offset: 0.6,
-        },
-        { transform: 'rotateY(0deg) translateZ(0) translateX(0)', opacity: 1, filter: 'blur(0) brightness(1)' },
+        { transform: `translateX(${fromX}px)`, opacity: 0, filter: 'blur(3px)' },
+        { transform: 'translateX(0)', opacity: 1, filter: 'blur(0)' },
       ],
-      { duration: DUR + 120, easing: EASE, fill: 'both' },
-    )
-  }
+      { duration: DUR, easing: EASE, fill: 'both' }
+    );
+  };
 
   const go = (next) => {
-    const dir = next > idx ? 1 : -1
-    setIdx(next)
-    setTimeout(() => animate(dir), 0)
-  }
+    const dir = next > idx ? 1 : -1;
+    setIdx(next);
+    setTimeout(() => animate(dir), 0);
+  };
 
-  const prev = () => go((idx - 1 + faculty.length) % faculty.length)
-  const next = () => go((idx + 1) % faculty.length)
+  const prev = () => go((idx - 1 + faculty.length) % faculty.length);
+  const next = () => go((idx + 1) % faculty.length);
 
-  const prof = faculty[idx]
+  const prof = faculty[idx];
 
   return (
-    <div className="relative w-full" style={{ minHeight: 560, perspective: 1200 }}>
-      {/* 워드마크 */}
-      <div
-        className="absolute top-0 right-4 font-mono font-bold select-none"
-        style={{
-          fontSize: 'clamp(28px,5vw,64px)',
-          letterSpacing: '.22em',
-          color: 'rgba(255,255,255,0.06)',
-        }}
-      >
-        FACULTY
+    <div style={{ position: 'relative', width: '100%', minHeight: 620, overflow: 'hidden' }}>
+      {/* PROFESSOR wordmark */}
+      <div style={{
+        position: 'absolute', top: 68, right: 32,
+        fontFamily: 'var(--font-mono)', fontWeight: 700,
+        fontSize: 'clamp(28px,5vw,68px)',
+        letterSpacing: '.22em',
+        color: 'rgba(255,255,255,.18)',
+        userSelect: 'none',
+      }}>
+        PROFESSOR
       </div>
 
-      {/* 좌상단 라벨 */}
-      <div className="absolute top-2 left-2 font-mono text-xs" style={{ color: C.greenDim }}>
-        [[ 교수진 {faculty.length}명 · 전용 연구실 7개 ]]
+      {/* Index label top-left */}
+      <div style={{
+        position: 'absolute', top: 72, left: 32,
+        fontFamily: 'var(--font-mono)', fontSize: 12, color: '#0099aa',
+      }}>
+        [[ 교수진 11명 · 전용 연구실 7개 ]]
       </div>
 
-      {/* 인디케이터 */}
-      <div className="absolute top-2 left-1/2 -translate-x-1/2 flex gap-1.5">
+      {/* Tick indicators */}
+      <div style={{ position: 'absolute', top: 72, left: '50%', transform: 'translateX(-50%)', display: 'flex', gap: 6 }}>
         {faculty.map((_, i) => (
           <button
             key={i}
             onClick={() => go(i)}
-            aria-label={`교수 ${i + 1}`}
             style={{
-              width: i === idx ? 36 : 18,
+              width: i === idx ? 40 : 22,
               height: 3,
               borderRadius: 2,
               border: 'none',
               cursor: 'pointer',
-              background: i === idx ? C.green : C.greenBorder,
+              background: i === idx ? '#00f5ff' : 'rgba(0,245,255,.22)',
               transition: 'width .3s, background .3s',
               padding: 0,
             }}
@@ -84,109 +74,100 @@ export default function FacultyCarousel() {
         ))}
       </div>
 
-      {/* 스테이지 */}
-      <div ref={stageRef} className="pt-12" style={{ transformStyle: 'preserve-3d' }}>
-        {/* 인물 사진 + 화살표 */}
-        <div className="relative flex items-center justify-center">
-          <button
-            onClick={prev}
-            aria-label="이전 교수"
-            className="absolute left-0 z-10 flex items-center justify-center rounded-full font-mono text-2xl"
-            style={{
-              width: 48, height: 48,
-              border: `1px solid ${C.greenBorder}`,
-              background: 'rgba(0,0,0,0.55)',
-              backdropFilter: 'blur(6px)',
-              color: C.green,
-              cursor: 'pointer',
-            }}
-          >
-            ‹
-          </button>
+      {/* Stage */}
+      <div ref={stageRef} style={{ position: 'absolute', inset: 0 }}>
+        {/* Portrait */}
+        <img
+          src={prof.img}
+          alt={prof.name}
+          style={{
+            position: 'absolute',
+            left: '50%',
+            top: '48%',
+            transform: 'translate(-50%, -50%)',
+            height: 'min(58vh, 560px)',
+            maxWidth: '36vw',
+            objectFit: 'contain',
+            WebkitMaskImage: 'radial-gradient(120% 120% at 50% 42%, #000 52%, transparent 88%)',
+            maskImage: 'radial-gradient(120% 120% at 50% 42%, #000 52%, transparent 88%)',
+            filter: 'drop-shadow(0 0 50px rgba(0,245,255,.18))',
+          }}
+        />
 
-          <div
-            className="select-none"
-            style={{ height: 'min(46vh, 420px)', width: 'min(46vh, 420px)', maxWidth: '64vw' }}
-          >
-            <PortraitPointCloud src={prof.img} />
+        {/* Name block */}
+        <div style={{
+          position: 'absolute', left: 38, bottom: 74,
+          background: 'rgba(4,8,15,.5)',
+          backdropFilter: 'blur(8px)',
+          border: '1px solid rgba(0,245,255,.12)',
+          borderRadius: 10,
+          padding: '18px 22px',
+        }}>
+          <div style={{ fontSize: 'clamp(28px,3vw,42px)', fontWeight: 700, color: '#f0f4f8' }}>
+            :: {prof.name}
           </div>
-
-          <button
-            onClick={next}
-            aria-label="다음 교수"
-            className="absolute right-0 z-10 flex items-center justify-center rounded-full font-mono text-2xl"
-            style={{
-              width: 48, height: 48,
-              border: `1px solid ${C.greenBorder}`,
-              background: 'rgba(0,0,0,0.55)',
-              backdropFilter: 'blur(6px)',
-              color: C.green,
-              cursor: 'pointer',
-            }}
-          >
-            ›
-          </button>
+          <div style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: '#00f5ff', letterSpacing: '.24em', marginTop: 4 }}>
+            {prof.degree} · PROFESSOR
+          </div>
+          <div style={{ height: 1, background: 'linear-gradient(#00f5ff, transparent)', width: 200, margin: '10px 0' }} />
+          <div style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: '#0099aa' }}>
+            {String(idx + 1).padStart(2, '0')} / {String(faculty.length).padStart(2, '0')}
+          </div>
         </div>
 
-        {/* 정보 카드 */}
-        <div className="mt-6 flex flex-wrap justify-center gap-4">
-          {/* 이름 카드 */}
-          <div
-            className="rounded-xl px-6 py-5 text-left"
-            style={{
-              background: 'rgba(0,0,0,0.5)',
-              backdropFilter: 'blur(8px)',
-              border: `1px solid ${C.greenBorder}`,
-            }}
-          >
-            <div
-              className="font-mono font-bold text-white"
-              style={{ fontSize: 'clamp(22px,3vw,32px)' }}
-            >
-              :: {prof.name}
-            </div>
-            <p className="font-mono text-xs mt-1" style={{ color: C.green, letterSpacing: '.24em' }}>
-              {prof.degree} · PROFESSOR
-            </p>
-            <div
-              className="my-2.5"
-              style={{ height: 1, width: 180, background: `linear-gradient(${C.green}, transparent)` }}
-            />
-            <p className="font-mono text-[11px]" style={{ color: C.greenDim }}>
-              {String(idx + 1).padStart(2, '0')} / {String(faculty.length).padStart(2, '0')}
-            </p>
+        {/* Detail block */}
+        <div style={{
+          position: 'absolute', right: 38, bottom: 74,
+          width: 'min(300px, 34vw)',
+          background: 'rgba(4,8,15,.5)',
+          backdropFilter: 'blur(8px)',
+          border: '1px solid rgba(0,245,255,.12)',
+          borderRadius: 10,
+          padding: '18px 22px',
+        }}>
+          <div style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: '#00f5ff', letterSpacing: '.22em', marginBottom: 10 }}>
+            전공분야 // RESEARCH
           </div>
-
-          {/* 상세 카드 */}
-          <div
-            className="rounded-xl px-6 py-5 text-left"
-            style={{
-              width: 'min(300px, 90vw)',
-              background: 'rgba(0,0,0,0.5)',
-              backdropFilter: 'blur(8px)',
-              border: `1px solid ${C.greenBorder}`,
-            }}
-          >
-            <p
-              className="font-mono text-[11px] mb-2.5"
-              style={{ color: C.green, letterSpacing: '.22em' }}
-            >
-              전공분야 // RESEARCH
-            </p>
-            <div className="flex flex-col gap-1">
-              {prof.fields.map((f) => (
-                <div key={f} className="font-sans font-bold text-sm text-white">{f}</div>
-              ))}
-            </div>
-            <p className="font-mono text-xs mt-3 opacity-60 text-[#b8c4bd]">
-              {prof.room} · {prof.tel}
-            </p>
-            <p className="font-mono text-xs mt-1" style={{ color: C.green }}>
-              {prof.email}
-            </p>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 4, textAlign: 'right' }}>
+            {prof.fields.map((f, i) => (
+              <div key={i} style={{ fontSize: 15, fontWeight: 700 }}>{f}</div>
+            ))}
+          </div>
+          <div style={{ marginTop: 12, fontFamily: 'var(--font-mono)', fontSize: 12, opacity: .66 }}>
+            {prof.room} · {prof.tel}
+          </div>
+          <div style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: '#00f5ff', marginTop: 4 }}>
+            {prof.email}
           </div>
         </div>
       </div>
+
+      {/* Arrow buttons */}
+      <button onClick={prev} style={arrowStyle({ left: 32 })}>‹</button>
+      <button onClick={next} style={arrowStyle({ right: 32 })}>›</button>
     </div>
-  )
+  );
+}
+
+function arrowStyle(pos) {
+  return {
+    position: 'absolute',
+    top: '50%',
+    transform: 'translateY(-50%)',
+    width: 54,
+    height: 54,
+    borderRadius: '50%',
+    border: '1px solid rgba(0,245,255,.3)',
+    background: 'rgba(7,14,26,.55)',
+    backdropFilter: 'blur(6px)',
+    color: '#00f5ff',
+    fontSize: 24,
+    cursor: 'pointer',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    zIndex: 20,
+    transition: 'all .2s',
+    ...pos,
+  };
 }

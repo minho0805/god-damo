@@ -71,4 +71,4 @@ export const faculty = [
     email: 'wcshin@skuniv.ac.kr',
     img: '/assets/prof-8-shinwuchang.png',
   },
-]
+];

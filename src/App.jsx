@@ -1,4 +1,3 @@
-import GlowCursor   from './components/GlowCursor'
 import NavBar       from './components/chrome/NavBar'
 import BinaryRain   from './components/BinaryRain'
 
@@ -6,9 +5,9 @@ import CodeIntroScene from './scenes/Page1/CodeIntroScene'
 import CoreChipScene from './scenes/Page1/CoreChipScene'
 
 import CircuitScene from './scenes/Page2/CircuitScene'
+import CurriculumRoadmap from './scenes/Page2/CurriculumRoadmap'
 
-import SparkScene   from './scenes/Page3/SparkScene'
-import CareerNetwork from './scenes/Page3/CareerNetwork'
+import CurriculumOverview from './scenes/Page3/CurriculumOverview'
 import FutureScene  from './scenes/Page3/FutureScene'
 
 export default function App() {
@@ -22,7 +21,6 @@ export default function App() {
         <BinaryRain opacity={0.08} speed={0.5} density={0.985} />
       </div>
 
-      <GlowCursor />
       <NavBar />
 
       {/* ── Page 1: 코드 인트로(노트북 화면 0/1 흡입) → (분해→Rain→Core→Chip→회로큐) ──
@@ -34,11 +32,11 @@ export default function App() {
       {/* ── Page 2: 살아있는 PCB — 코어에서 과목 노드로 확장 ── */}
       <CircuitScene />
 
-      <div className="section-divider" />
+      {/* ── Page 2.5: 커리큘럼 로드맵 — 연도별 3D 터널 + 학년 테이블 (AI-contest-ver.chungs에서 이식) ── */}
+      <CurriculumRoadmap />
 
-      {/* ── Page 3: 스파크 → 커리어 → 미래 ── */}
-      <SparkScene />
-      <CareerNetwork />
+      {/* ── Page 3: 이수체계도 한눈에 보기 → 미래 ── */}
+      <CurriculumOverview />
       <FutureScene />
     </main>
   )

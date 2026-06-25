@@ -158,6 +158,7 @@ function Laptop({ progressRef, typed, isComplete }) {
   const screenRef = useRef(null)
   const glowRef = useRef(null)
   const codeCardRef = useRef(null)
+  const screenWrapRef = useRef(null)
   const [screenVisible, setScreenVisible] = useState(false)
 
   const keyboardKeys = useMemo(() => {
@@ -209,8 +210,17 @@ function Laptop({ progressRef, typed, isComplete }) {
     const openness = Math.max(0, Math.min(1, (CLOSED_ANGLE - openAngle) / (CLOSED_ANGLE - OPEN_ANGLE)))
     if (glowRef.current) glowRef.current.intensity = openness * 0.7
 
-    const visible = openness > 0.7
+    // 화면이 일정 각도 이상 열리면 DOM을 미리 마운트해두고, 실제 모습은
+    // opacity로 부드럽게 페이드인 — 각도 임계값에서 뚝 끊겨 나타나는 느낌을 없앤다
+    const visible = openness > 0.3
     if (visible !== screenVisible) setScreenVisible(visible)
+
+    const fadeInT = Math.max(0, Math.min(1, (openness - 0.45) / 0.4))
+    const screenOpacity = easeOutCubic(fadeInT)
+    if (screenWrapRef.current) {
+      screenWrapRef.current.style.opacity = String(screenOpacity)
+      screenWrapRef.current.style.transform = `scale(${0.94 + 0.06 * screenOpacity})`
+    }
 
     // 화면 속 코드 카드는 닫지 않고 그대로 사라진다 — 화면 전체를 덮는 0/1 터널이 이어받는다
     const closeT = p > TYPE_END ? Math.max(0, Math.min(1, (p - TYPE_END) / (CLOSE_END - TYPE_END))) : 0
@@ -287,8 +297,18 @@ function Laptop({ progressRef, typed, isComplete }) {
         <pointLight ref={glowRef} position={[0, 0.68, 0.6]} color={C.green} intensity={0} distance={3} />
 
         {screenVisible && (
-          <Html position={[0, 0.68, 0.09]} center wrapperClass="pointer-events-none select-none">
-            <div className="relative" style={{ width: 567, height: 326 }}>
+          <Html
+            position={[0, 0.68, 0.092]}
+            transform
+            scale={0.134}
+            center
+            wrapperClass="pointer-events-none select-none"
+          >
+            <div
+              ref={screenWrapRef}
+              className="relative"
+              style={{ width: 567, height: 326, opacity: 0, transformOrigin: 'center center' }}
+            >
             <div
               ref={codeCardRef}
               className="absolute inset-0 overflow-hidden rounded-lg font-mono text-[15px] leading-snug"
