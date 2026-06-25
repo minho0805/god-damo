@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import logoUrl from '../../assets/logo/skulogo.svg'
+import logoUrl from '../../assets/logo/skulogo.jpg'
 
 const SECTIONS = [
   { id: 'home',       label: 'Home' },
